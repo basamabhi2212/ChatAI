@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>User Login</h2>
+    <input type="text" id="userMobile" placeholder="Enter Mobile Number">
+    <button onclick="userLogin()">Login to Chat</button>
+  </div>
+
+  <script>
+    function userLogin() {
+      const mobile = document.getElementById('userMobile').value;
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (users.includes(mobile)) {
+        localStorage.setItem('mobile', mobile);
+        localStorage.setItem('role', 'User');
+        location.href = 'userchat.html';
+      } else {
+        alert('User not found. Please contact admin.');
+      }
+    }
+  </script>
+</body>
+</html>

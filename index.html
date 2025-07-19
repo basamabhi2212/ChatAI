@@ -1,0 +1,174 @@
+<!-- index.html (Admin Login Page) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AI ChatBot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <input type="text" id="mobile" placeholder="Enter Admin Mobile Number" />
+    <button onclick="adminLogin()">Login</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1>Welcome, Admin</h1>
+    <nav>
+      <input type="text" id="newUserMobile" placeholder="Enter User Mobile">
+      <button onclick="addUser()">Add User</button>
+      <button onclick="location.href='chat.html'">Go to Chat</button>
+      <button onclick="logout()">Logout</button>
+    </nav>
+    <div>
+      <h3>Registered Users:</h3>
+      <ul id="userList"></ul>
+    </div>
+  </div>
+  <script>
+    const role = localStorage.getItem('role');
+    if (role !== 'Admin') location.href = 'index.html';
+    const userList = document.getElementById('userList');
+
+    function loadUsers() {
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      userList.innerHTML = '';
+      users.forEach(mobile => {
+        const li = document.createElement('li');
+        li.textContent = mobile;
+        userList.appendChild(li);
+      });
+    }
+
+    function addUser() {
+      const newMobile = document.getElementById('newUserMobile').value;
+      if (!newMobile || newMobile.length < 10) {
+        alert('Enter valid mobile number');
+        return;
+      }
+      let users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (!users.includes(newMobile)) {
+        users.push(newMobile);
+        localStorage.setItem('users', JSON.stringify(users));
+        loadUsers();
+      } else {
+        alert('User already exists');
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      location.href = 'index.html';
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
+
+<!-- chat.html (For User Login) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>User Login</h2>
+    <input type="text" id="userMobile" placeholder="Enter Mobile Number">
+    <button onclick="userLogin()">Login to Chat</button>
+  </div>
+  <script>
+    function userLogin() {
+      const mobile = document.getElementById('userMobile').value;
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (users.includes(mobile)) {
+        localStorage.setItem('mobile', mobile);
+        localStorage.setItem('role', 'User');
+        location.href = 'userchat.html';
+      } else {
+        alert('User not found. Please contact admin.');
+      }
+    }
+  </script>
+</body>
+</html>
+
+<!-- userchat.html (User Chat Page) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="chat-container">
+    <h2>AI ChatBot</h2>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <script>
+    const role = localStorage.getItem('role');
+    if (role !== 'User') location.href = 'chat.html';
+
+    const chatBox = document.getElementById('chat-box');
+    function sendMessage() {
+      const input = document.getElementById('user-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      appendMessage('You', msg);
+      input.value = '';
+      setTimeout(() => {
+        appendMessage('Bot', `You said: "${msg}". I'm your AI assistant!`);
+      }, 500);
+    }
+    function appendMessage(sender, text) {
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    function logout() {
+      localStorage.clear();
+      location.href = 'chat.html';
+    }
+  </script>
+</body>
+</html>
+
+<!-- style.css and script.js remain unchanged -->
+
+<!-- script.js (for Admin Login) -->
+function adminLogin() {
+  const mobile = document.getElementById('mobile').value;
+  if (mobile === '9999999999') { // hardcoded admin mobile
+    localStorage.setItem('mobile', mobile);
+    localStorage.setItem('role', 'Admin');
+    location.href = 'dashboard.html';
+  } else {
+    alert('Invalid Admin Number');
+  }
+}

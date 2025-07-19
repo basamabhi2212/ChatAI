@@ -23,16 +23,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Admin Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="dashboard-container">
     <h1>Welcome, Admin</h1>
     <nav>
-      <input type="text" id="newUserMobile" placeholder="Enter User Mobile">
+      <input type="text" id="newUserMobile" placeholder="Enter User Mobile Number">
       <button onclick="addUser()">Add User</button>
-      <button onclick="location.href='chat.html'">Go to Chat</button>
+      <button onclick="location.href='chat.html'">Go to User Login</button>
       <button onclick="logout()">Logout</button>
     </nav>
     <div>
@@ -40,13 +40,17 @@
       <ul id="userList"></ul>
     </div>
   </div>
+
   <script>
-    const role = localStorage.getItem('role');
-    if (role !== 'Admin') location.href = 'index.html';
-    const userList = document.getElementById('userList');
+    window.onload = function () {
+      const role = localStorage.getItem('role');
+      if (role !== 'Admin') location.href = 'index.html';
+      loadUsers();
+    };
 
     function loadUsers() {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const userList = document.getElementById('userList');
       userList.innerHTML = '';
       users.forEach(mobile => {
         const li = document.createElement('li');
@@ -58,7 +62,7 @@
     function addUser() {
       const newMobile = document.getElementById('newUserMobile').value;
       if (!newMobile || newMobile.length < 10) {
-        alert('Enter valid mobile number');
+        alert('Enter a valid mobile number');
         return;
       }
       let users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -75,19 +79,17 @@
       localStorage.clear();
       location.href = 'index.html';
     }
-
-    loadUsers();
   </script>
 </body>
 </html>
 
-<!-- chat.html (For User Login) -->
+<!-- chat.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Chat</title>
+  <title>User Login</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -96,6 +98,7 @@
     <input type="text" id="userMobile" placeholder="Enter Mobile Number">
     <button onclick="userLogin()">Login to Chat</button>
   </div>
+
   <script>
     function userLogin() {
       const mobile = document.getElementById('userMobile').value;
@@ -112,13 +115,13 @@
 </body>
 </html>
 
-<!-- userchat.html (User Chat Page) -->
+<!-- userchat.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat</title>
+  <title>User Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -129,21 +132,28 @@
     <button onclick="sendMessage()">Send</button>
     <button onclick="logout()">Logout</button>
   </div>
+
   <script>
-    const role = localStorage.getItem('role');
-    if (role !== 'User') location.href = 'chat.html';
+    window.onload = function () {
+      const role = localStorage.getItem('role');
+      if (role !== 'User') location.href = 'chat.html';
+    };
 
     const chatBox = document.getElementById('chat-box');
+
     function sendMessage() {
       const input = document.getElementById('user-input');
       const msg = input.value.trim();
       if (!msg) return;
+
       appendMessage('You', msg);
       input.value = '';
+
       setTimeout(() => {
-        appendMessage('Bot', `You said: "${msg}". I'm your AI assistant!`);
+        appendMessage('Bot', `You said: "${msg}". I'm your AI assistant.`);
       }, 500);
     }
+
     function appendMessage(sender, text) {
       const div = document.createElement('div');
       div.className = 'message';
@@ -151,6 +161,7 @@
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
+
     function logout() {
       localStorage.clear();
       location.href = 'chat.html';
@@ -159,12 +170,10 @@
 </body>
 </html>
 
-<!-- style.css and script.js remain unchanged -->
-
-<!-- script.js (for Admin Login) -->
+<!-- script.js -->
 function adminLogin() {
   const mobile = document.getElementById('mobile').value;
-  if (mobile === '9999999999') { // hardcoded admin mobile
+  if (mobile === '9999999999') {
     localStorage.setItem('mobile', mobile);
     localStorage.setItem('role', 'Admin');
     location.href = 'dashboard.html';
@@ -172,3 +181,5 @@ function adminLogin() {
     alert('Invalid Admin Number');
   }
 }
+
+/* style.css remains the same */

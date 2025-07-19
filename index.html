@@ -175,11 +175,10 @@ function adminLogin() {
   const mobile = document.getElementById('mobile').value;
   if (mobile === '9999999999') {
     localStorage.setItem('mobile', mobile);
-    localStorage.setItem('role', 'Admin');
-    location.href = 'dashboard.html';
+    localStorage.setItem('role', 'Admin');  // This must be saved
+    window.location.href = 'dashboard.html';
   } else {
     alert('Invalid Admin Number');
   }
 }
 
-/* style.css remains the same */

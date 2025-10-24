@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks Data - NavaBharath History</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stock-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .stock-card h4 {
+            color: #004d99;
+            margin-top: 0;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">NavaBharath</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="stocks-data.html">Stocks Data</a>
+            <a href="about-us.html">About Us</a>
+        </nav>
+        <input type="text" id="searchBar" placeholder="Search Stock Name..." onkeyup="searchStock()">
+    </header>
 
+    <main class="container">
+        <h2>Stock Analysis History (Saved Locally)</h2>
+        <p>This data is stored in your browser's local storage and shows all stocks that have been analyzed on this page.</p>
+        <div id="historyList">
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Function to run specifically on stocks-data.html
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStockDataLocally(); // Load the global array
+            renderStockHistory();
+        });
+
+        function renderStockHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = ''; // Clear previous content
+
+            if (stockAnalysisData.length === 0) {
+                historyList.innerHTML = '<p>No stock analysis history found. Run the picker on the Home page first.</p>';
+                return;
+            }
+
+            // Reverse the array to show the latest analysis first
+            const reversedData = stockAnalysisData.slice().reverse();
+            
+            reversedData.forEach(item => {
+                const date = new Date(item.verificationDate).toLocaleString();
+                const zone = item.analysis['1. Is it a buy, hold, or avoid zone?'];
+                const summary = item.analysis['4. One-line summary for YouTube narration.'];
+                
+                const card = document.createElement('div');
+                card.className = 'stock-card';
+                card.innerHTML = `
+                    <h4>${item.stockName}</h4>
+                    <p><strong>Verified:</strong> ${date}</p>
+                    <p><strong>Zone:</strong> <span style="font-weight:bold; color:${zone.startsWith('Buy') ? 'green' : zone.startsWith('Avoid') ? 'red' : 'orange'};">${zone}</span></p>
+                    <p><strong>Summary:</strong> ${summary}</p>
+                `;
+                historyList.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

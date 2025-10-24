@@ -1,11 +1,13 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
     color: #333;
+    line-height: 1.6;
 }
 
+/* --- Header & Navigation --- */
 header {
     background-color: #004d99; /* Deep Blue - NavaBharath */
     color: white;
@@ -16,18 +18,19 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
     font-size: 1.8em;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 nav a {
     color: white;
     text-decoration: none;
     margin: 0 15px;
-    font-size: 1.1em;
+    font-size: 1em;
     transition: color 0.3s;
 }
 
@@ -35,24 +38,36 @@ nav a:hover {
     color: #ffd700; /* Gold accent */
 }
 
+/* --- Search Bar (Top Right) --- */
 #searchBar {
     padding: 8px 15px;
     border-radius: 20px;
     border: none;
     background-color: #ffffff;
-    font-size: 1em;
+    font-size: 0.9em;
+    outline: none;
+    width: 200px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* --- Main Content Layout --- */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 40px auto;
-    padding: 20px;
+    padding: 30px;
     background: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
+#home-section h1 {
+    color: #004d99;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* --- Buttons --- */
 button {
     background-color: #008cba; /* Sky Blue */
     color: white;
@@ -61,24 +76,53 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1.1em;
-    transition: background-color 0.3s;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background-color: #005f79;
+    transform: translateY(-1px);
 }
 
-/* Loading Spinner CSS */
+button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+/* --- Stock List Display --- */
+.stock-list-area h3 {
+    color: #333;
+    margin-top: 25px;
+}
+.stock-list-area ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.stock-list-area li {
+    background-color: #e0f7fa;
+    color: #004d99;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Loading Spinner CSS --- */
 .spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #008cba;
     border-radius: 50%;
     width: 25px;
     height: 25px;
-    animation: spin 2s linear infinite;
+    animation: spin 1s linear infinite;
     display: inline-block;
     vertical-align: middle;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 @keyframes spin {
@@ -86,6 +130,7 @@ button:hover {
     100% { transform: rotate(360deg); }
 }
 
+/* --- Footer --- */
 footer {
     text-align: center;
     padding: 20px;

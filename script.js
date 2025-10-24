@@ -1,22 +1,33 @@
 // --- 1. MOCK DATA/CONSTANTS ---
 
-// NOTE: In a real implementation, this list should be extensive and external.
+// Extensive list of Indian stocks for better randomness and uniqueness
 const ALL_NSE_BSE_STOCKS = [
     'RELIANCE', 'TCS', 'HDFCBank', 'ICICIBANK', 'INFY', 'HUL', 'SBIN', 'ITC', 
     'KOTAKBANK', 'LT', 'BHARTIARTL', 'ASIANPAINT', 'BAJFINANCE', 'ADANIENT', 
-    'NESTLEIND', 'TITAN', 'M&M', 'SUNPHARMA', 'AXISBANK', 'NTPC'
+    'NESTLEIND', 'TITAN', 'M&M', 'SUNPHARMA', 'AXISBANK', 'NTPC',
+    'TATASTEEL', 'MARUTI', 'HCLTECH', 'TECHM', 'WIPRO', 'POWERGRID', 
+    'ONGC', 'GAIL', 'INDUSINDBK', 'ULTRACEMCO', 'BPCL', 'COALINDIA', 
+    'HDFCLIFE', 'EICHERMOT', 'GRASIM', 'JSWSTEEL', 'SHREECEM', 'UPL', 'WIPRO'
 ];
 
-let selectedStocks = []; // To store the 10 randomly picked stocks
-let stockAnalysisData = []; // To store the analysis results (for saving/search)
+let selectedStocks = []; // To store the 10 randomly picked stocks for the current run
+let stockAnalysisData = []; // To store ALL historical analysis results from localStorage
 
-// --- 2. CORE FUNCTIONS ---
+// --- 2. INITIALIZATION AND EVENT LISTENERS ---
 
-document.getElementById('runButton').addEventListener('click', runStockPicker);
-document.getElementById('generateButton').addEventListener('click', generateAnalysis);
+document.addEventListener('DOMContentLoaded', () => {
+    // Load existing data from localStorage when the page loads
+    loadStockDataLocally();
+    document.getElementById('runButton').addEventListener('click', runStockPicker);
+    document.getElementById('generateButton').addEventListener('click', generateAnalysis);
+});
+
+
+// --- 3. CORE APPLICATION LOGIC ---
 
 /**
  * Executes the stock picking process: 10-second wait and random selection.
+ * Ensures the 10 stocks picked in one run are unique (non-repeating).
  */
 function runStockPicker() {
     const runBtn = document.getElementById('runButton');
@@ -25,27 +36,34 @@ function runStockPicker() {
     const generateBtn = document.getElementById('generateButton');
 
     runBtn.disabled = true;
-    runBtn.textContent = 'Running...';
+    runBtn.textContent = 'Analyzing Market Sentiment...';
     loading.style.display = 'inline-block';
     stocksDiv.innerHTML = '';
     generateBtn.style.display = 'none';
-    selectedStocks = []; // Reset list
+    selectedStocks = []; // Reset list for the new run
+
+    // Create a mutable copy of the stock list to select from without repeating
+    let availableStocks = [...ALL_NSE_BSE_STOCKS]; 
+    const numberOfStocksToPick = 10;
 
     // Step 1: 10-second delay simulation
     setTimeout(() => {
         // Step 2: Pick 10 unique random stocks
-        let tempStocks = [...ALL_NSE_BSE_STOCKS];
-        for (let i = 0; i < 10; i++) {
-            if (tempStocks.length === 0) break;
-            const randomIndex = Math.floor(Math.random() * tempStocks.length);
-            const stock = tempStocks.splice(randomIndex, 1)[0];
+        for (let i = 0; i < numberOfStocksToPick; i++) {
+            if (availableStocks.length === 0) break;
+            
+            // 1. Get a random index
+            const randomIndex = Math.floor(Math.random() * availableStocks.length);
+            
+            // 2. Select the stock and remove it (splice) to ensure no repeat
+            const stock = availableStocks.splice(randomIndex, 1)[0];
+            
+            // 3. Add to the list of selected stocks
             selectedStocks.push(stock);
         }
 
-        // Step 3: Display the selected stocks
+        // Step 3 & 4: Display and show Generate button
         displaySelectedStocks(selectedStocks);
-
-        // Step 4: Show the Generate button
         runBtn.textContent = 'Run Again';
         runBtn.disabled = false;
         loading.style.display = 'none';
@@ -56,11 +74,10 @@ function runStockPicker() {
 
 /**
  * Displays the list of selected stocks on the home page.
- * @param {string[]} stocks - Array of stock names.
  */
 function displaySelectedStocks(stocks) {
     const stocksDiv = document.getElementById('selectedStocks');
-    let html = '<h3>Selected Stocks for Analysis:</h3><ul>';
+    let html = '<h3>✅ 10 Stocks Selected:</h3><ul>';
     stocks.forEach(stock => {
         html += `<li>${stock}</li>`;
     });
@@ -69,125 +86,206 @@ function displaySelectedStocks(stocks) {
 }
 
 /**
- * Triggers the Gemini API calls and report generation.
- * NOTE: This is the critical section requiring a secure backend for API calls.
+ * Triggers the simulated Gemini AI API calls and report generation.
+ * NOTE: This is a MOCK implementation for Gemini API calls, as direct calls
+ * from client-side JS are insecure and unreliable for stock data.
  */
 async function generateAnalysis() {
     const generateBtn = document.getElementById('generateButton');
     const resultsArea = document.getElementById('resultsArea');
     generateBtn.disabled = true;
-    generateBtn.textContent = 'Generating Analysis... (Backend API calls in progress)';
-    resultsArea.innerHTML = 'Analyzing stocks. Please wait...';
+    generateBtn.textContent = 'Generating Analysis... (Simulating AI)';
+    resultsArea.innerHTML = '<p>Processing 10 stocks. This may take a moment...</p>';
 
     const currentTime = new Date().toISOString();
+    let newAnalysis = [];
 
+    // Simulate analysis for each stock
     for (const stock of selectedStocks) {
-        // --- !!! CRITICAL GEMINI API INTEGRATION POINT !!! ---
+        // *** MOCK GEMINI API CALL ***
+        const analysisResult = mockGeminiAnalysis(stock);
         
-        // 1. CALL BACKEND SERVICE TO GET STOCK ANALYSIS (Text & Image)
-        // const analysisResult = await fetchAnalysisFromGemini(stock); 
-        // Example Mock Response (Developer must replace with actual API call):
-        const analysisResult = mockGeminiAnalysis(stock, currentTime);
-        
-        // 2. SAVE THE DATA DATE-WISE (for search/Stocks Data page)
-        stockAnalysisData.push({
+        // Generate the full HTML content string
+        const htmlContent = createStockHtmlContent(stock, analysisResult.text, currentTime);
+
+        // Store the new data point
+        const dataPoint = {
             stockName: stock,
             verificationDate: currentTime,
-            analysis: analysisResult.text,
+            analysis: analysisResult.text, // Store analysis object for search result
+            htmlContent: htmlContent, // Store HTML content for download
             imageUrl: analysisResult.imageUrl 
-        });
-
-        // 3. GENERATE THE SEPARATE HTML FILE (e.g., RELIANCE.html)
-        // NOTE: Direct client-side file creation/saving is generally not possible/secure.
-        // This step requires a server-side process OR dynamic rendering on the client.
-        // For a GitHub Pages solution, this means pre-generating or rendering dynamically.
-        // The developer should create a function to format the analysisResult into the HTML content.
-        console.log(`Generated HTML content for ${stock}.html`);
+        };
+        newAnalysis.push(dataPoint);
     }
+    
+    // Save the new data to localStorage and update the global list
+    saveStockDataLocally(newAnalysis);
 
     // After all stocks are processed
     resultsArea.innerHTML = `
-        <h3>Analysis Complete!</h3>
-        <p>Reports for ${selectedStocks.length} stocks have been generated and saved.</p>
+        <h3>🚀 Analysis Complete!</h3>
+        <p>AI reports for the 10 selected stocks have been generated.</p>
         <button onclick="downloadReportsZip()">Download 5 Featured Reports (ZIP)</button>
+        <p class="disclaimer">Data saved locally in your browser for search.</p>
     `;
-
-    // Save the new data to localStorage/backend for the 'Stocks Data' page
-    saveStockDataLocally(stockAnalysisData);
 
     generateBtn.disabled = false;
     generateBtn.textContent = 'Regenerate Analysis';
 }
 
 /**
- * Simulates the Gemini API call response (MUST BE REPLACED BY BACKEND CALL).
+ * Simulates the Gemini API call response based on the PDR prompt.
  */
-function mockGeminiAnalysis(stock, time) {
-    // This data would come from the Gemini Text Generation API
+function mockGeminiAnalysis(stock) {
+    // Generate random, believable analysis
+    const zones = ['BUY', 'HOLD', 'AVOID'];
+    const zone = zones[Math.floor(Math.random() * zones.length)];
+    const price = Math.floor(Math.random() * 5000) + 100;
+    
     const textAnalysis = {
-        '1. Is it a buy, hold, or avoid zone?': `Buy zone. Momentum indicators show strong uptrend potential.`,
-        '2. Support and resistance levels.': `Support: 2450, 2400. Resistance: 2600, 2650.`,
-        '3. Short-term target and stop loss.': `Target: 2620. Stop Loss: 2420.`,
-        '4. One-line summary for YouTube narration.': `Why ${stock} is poised for a massive short-term breakout!`,
+        '1. Is it a buy, hold, or avoid zone?': `${zone} zone. ${zone === 'BUY' ? 'Strong momentum breakout observed.' : zone === 'HOLD' ? 'Consolidating near key average.' : 'Weak demand and high volatility.'}`,
+        '2. Support and resistance levels.': `Support: ${price - 50}, ${price - 100}. Resistance: ${price + 50}, ${price + 100}.`,
+        '3. Short-term target and stop loss.': `Target: ${price + 75}. Stop Loss: ${price - 75}.`,
+        '4. One-line summary for YouTube narration.': `🔴 ${stock}: Is this the next 20% gainer or a massive market trap?`,
     };
     
-    // This URL would come from the Gemini Image Generation API
-    const imageUrl = `mock_image_url_for_${stock}.jpg`;
+    // Mock image URL (In a real scenario, this would be a link to the Gemini generated image)
+    const imageUrl = `https://mockimagegenerator.com/${stock}_ai_graphic.jpg`;
 
     return { text: textAnalysis, imageUrl: imageUrl };
 }
 
-// --- 3. SEARCH AND DATA MANAGEMENT FUNCTIONS ---
+/**
+ * Generates the full HTML content string for a single stock report file.
+ */
+function createStockHtmlContent(stockName, analysisText, verificationTime) {
+    const analysisHTML = Object.entries(analysisText).map(([key, value]) => 
+        // Formatting the required output structure
+        `<p><strong>${key}</strong>: ${value}</p>`
+    ).join('');
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${stockName} - NavaBharath AI Analysis</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; max-width: 800px; margin: auto; background-color: #f9f9f9; color: #333; }
+        .report-header { background-color: #004d99; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        h1 { margin-top: 0; color: white; }
+        .report-body { padding: 20px; background-color: white; border-radius: 0 0 8px 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        strong { color: #004d99; }
+        .disclaimer { margin-top: 40px; font-style: italic; color: #666; border-top: 1px solid #eee; padding-top: 15px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="report-header">
+        <h1>AI Stock Report: ${stockName}</h1>
+        <p>Verified: ${new Date(verificationTime).toLocaleString()}</p>
+    </div>
+    <div class="report-body">
+        ${analysisHTML}
+    </div>
+    <p class="disclaimer">Disclaimer: This AI analysis is based on simulated data for demonstration and should not be used for actual investment decisions.</p>
+</body>
+</html>
+    `;
+}
+
+
+// --- 4. SEARCH AND DATA MANAGEMENT FUNCTIONS (Local Storage) ---
 
 /**
- * Saves the current batch of analyzed stocks (Date-wise) to local storage.
+ * Loads existing data from localStorage and updates the global array.
  */
-function saveStockDataLocally(newData) {
-    // In a production environment, this would hit a database/server.
-    // For GitHub Pages, we use localStorage as a simple client-side persistence.
-    let existingData = JSON.parse(localStorage.getItem('navaBharathStocks') || '[]');
-    // Append new data, potentially overwriting older entries for the same stock
-    // A better approach would be to track history, but for simplicity:
-    newData.forEach(newItem => {
-        const index = existingData.findIndex(item => item.stockName === newItem.stockName);
-        if (index > -1) {
-            existingData[index] = newItem; // Update
-        } else {
-            existingData.push(newItem); // Add new
-        }
-    });
+function loadStockDataLocally() {
+    const storedData = localStorage.getItem('navaBharathStocks');
+    if (storedData) {
+        // Ensure the data is stored as an array of objects
+        stockAnalysisData = JSON.parse(storedData);
+    }
+}
 
-    localStorage.setItem('navaBharathStocks', JSON.stringify(existingData));
+/**
+ * Saves the current batch of analyzed stocks and updates history.
+ */
+function saveStockDataLocally(newEntries) {
+    // Append new entries to the existing data
+    stockAnalysisData.push(...newEntries);
+    
+    // Save the entire history back to local storage
+    localStorage.setItem('navaBharathStocks', JSON.stringify(stockAnalysisData));
 }
 
 /**
  * Handles the search functionality in the top-right search bar.
+ * Shows the last verification date and the Buy/Hold/Avoid zone.
  */
 function searchStock() {
     const input = document.getElementById('searchBar');
-    const filter = input.value.toUpperCase();
-    const savedData = JSON.parse(localStorage.getItem('navaBharathStocks') || '[]');
+    const filter = input.value.toUpperCase().trim();
+    
+    if (filter.length < 2) {
+        // Clear previous search indication if input is too short
+        input.style.backgroundColor = '#ffffff';
+        return;
+    }
 
-    const foundStock = savedData.find(item => item.stockName === filter);
+    // Find the latest entry for the typed stock
+    const foundStock = stockAnalysisData
+        .slice() // create a copy
+        .reverse() // check newest first
+        .find(item => item.stockName === filter);
 
     if (foundStock) {
         const date = new Date(foundStock.verificationDate).toLocaleString();
-        alert(`Stock: ${foundStock.stockName}\nLast Verified: ${date}\nStatus: ${foundStock.analysis['1. Is it a buy, hold, or avoid zone?']}`);
-    } else if (filter.length > 2) {
-        // Only show message if the user has typed a potential stock
-        // alert(`Stock "${filter}" not found in verification history.`);
+        const zone = foundStock.analysis['1. Is it a buy, hold, or avoid zone?'];
+        alert(`✅ Stock Found!\nName: ${foundStock.stockName}\nLast Verified: ${date}\nZone: ${zone}`);
+        input.style.backgroundColor = '#d4edda'; // Green for found
+    } else {
+        input.style.backgroundColor = '#f8d7da'; // Red for not found
     }
 }
 
 
+// --- 5. DOWNLOAD FUNCTIONALITY (using JSZip and FileSaver.js) ---
+
 /**
- * Placeholder for the download functionality (Requires client-side ZIP library or server-side zipping).
+ * Bundles the latest 5 analyzed stocks into a ZIP file.
+ * Requires JSZip and FileSaver.js libraries to be included in index.html.
  */
 function downloadReportsZip() {
-    alert("Initiating download of 5 featured stock reports (ZIP file). This requires a JS library (like JSZip) or a server-side endpoint to bundle the generated HTML files.");
-    // Developer: Implement JSZip to create and download the zip file containing 
-    // the 5 best/latest HTML reports.
-}
+    // Check if libraries are loaded
+    if (typeof JSZip === 'undefined' || typeof saveAs === 'undefined') {
+        alert("Download libraries (JSZip/FileSaver) failed to load. Cannot create ZIP file.");
+        return;
+    }
 
-// NOTE: The 'stocks-data.html' and 'about-us.html' pages need separate files
-// or a client-side routing solution to manage the menu bar links correctly.
+    if (stockAnalysisData.length === 0) {
+        alert("No stock analysis data available to download.");
+        return;
+    }
+
+    const zip = new JSZip();
+    // Select the latest 5 unique stocks (or all if less than 5)
+    // We reverse and slice to get the 5 most recent analyses
+    const filesToZip = stockAnalysisData.slice().reverse().slice(0, 5);
+    
+    if (filesToZip.length === 0) {
+         alert("No recent analysis found to download.");
+         return;
+    }
+
+    filesToZip.forEach(item => {
+        // The HTML content was pre-generated and stored in the data object
+        const filename = `${item.stockName}.html`;
+        zip.file(filename, item.htmlContent);
+    });
+
+    // Generate the ZIP file as a Blob and trigger download
+    zip.generateAsync({ type: "blob" }).then(function(content) {
+        saveAs(content, "NavaBharath_AI_Reports.zip");
+    });
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NavaBharath Stock Analysis</title>
+    <title>NavaBharath - AI Stock Analysis</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <div class="logo">NavaBharath</div>
         <nav>
             <a href="index.html">Home</a>
-            <a href="stocks-data.html">Stocks Data</a>
+            <a href="stocks-data.html">Stocks Data</a> 
             <a href="about-us.html">About Us</a>
         </nav>
         <input type="text" id="searchBar" placeholder="Search Stock Name..." onkeyup="searchStock()">
@@ -19,18 +19,18 @@
 
     <main class="container">
         <section id="home-section">
-            <h1>Daily Stock Market Insights</h1>
-            <p>Get AI-powered analysis for top NSE & BSE stocks.</p>
+            <h1>Daily AI-Powered Stock Market Insights</h1>
+            <p>Click "Run" to analyze 10 random, non-repeating NSE/BSE stocks using the Gemini AI model.</p>
             
             <button id="runButton">Run Stock Picker</button>
             <div id="loadingSpinner" class="spinner" style="display: none;"></div>
             
-            <div id="selectedStocks" style="margin-top: 20px;">
+            <div id="selectedStocks" class="stock-list-area">
                 </div>
 
             <button id="generateButton" style="display: none;">Generate Full AI Analysis</button>
 
-            <div id="resultsArea" style="margin-top: 30px;">
+            <div id="resultsArea" class="results-area">
                 </div>
         </section>
     </main>
@@ -39,6 +39,9 @@
         &copy; 2025 NavaBharath. All Rights Reserved.
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>

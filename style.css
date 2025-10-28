@@ -1,140 +1,39 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
+  background: #0d1117;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-/* --- Header & Navigation --- */
-header {
-    background-color: #004d99; /* Deep Blue - NavaBharath */
-    color: white;
-    padding: 15px 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-    font-size: 1.8em;
-    font-weight: 700;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
-    font-size: 1em;
-    transition: color 0.3s;
-}
-
-nav a:hover {
-    color: #ffd700; /* Gold accent */
-}
-
-/* --- Search Bar (Top Right) --- */
-#searchBar {
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: none;
-    background-color: #ffffff;
-    font-size: 0.9em;
-    outline: none;
-    width: 200px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* --- Main Content Layout --- */
 .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 30px;
-    background: white;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+  margin: 50px auto;
+  width: 90%;
+  max-width: 600px;
 }
 
-#home-section h1 {
-    color: #004d99;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+textarea {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
 }
 
-/* --- Buttons --- */
 button {
-    background-color: #008cba; /* Sky Blue */
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-top: 15px;
-    transition: background-color 0.3s, transform 0.1s;
+  background: #00bfff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-button:hover:not(:disabled) {
-    background-color: #005f79;
-    transform: translateY(-1px);
-}
-
-button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-}
-
-/* --- Stock List Display --- */
-.stock-list-area h3 {
-    color: #333;
-    margin-top: 25px;
-}
-.stock-list-area ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.stock-list-area li {
-    background-color: #e0f7fa;
-    color: #004d99;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* --- Loading Spinner CSS --- */
-.spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #008cba;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    animation: spin 1s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 15px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* --- Footer --- */
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #333;
-    color: white;
-    margin-top: 50px;
+#output {
+  margin-top: 30px;
+  font-size: 18px;
+  white-space: pre-wrap;
 }
